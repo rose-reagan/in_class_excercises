@@ -1,0 +1,157 @@
+<index2 html>
+<html>
+ <head>
+    <script src="https://unpkg.com/jspsych@8.0.0"></script>
+    <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@2.0.0"></script>
+     <script src="https://unpkg.com/@jspsych/plugin-image-keyboard-response@2.0.0"></script>
+     <script src="https://unpkg.com/@jspsych/plugin-preload@2.0.0"></script>
+    <link href="https://unpkg.com/jspsych@8.0.0/css/jspsych.css" rel="stylesheet" type="text/css" />
+
+   <!-- this is where we can load packages and files that we will use to help us build the experiment -->
+   <title>rt experiment</title>
+ </head>
+ <body>
+ </body>
+ <script>
+   //this is where we will write JavaScript code to control the experiments
+   var jsPsych = initJsPsych(
+   {
+     on_finish: function () {
+       jsPsych.data.displayData();
+     }
+   }
+ );
+
+
+   var timeline = [];
+
+   var preload = {
+  type: jsPsychPreload,
+  images: ['images/blue.png', 'images/orange.png']
+};
+timeline.push(preload);
+
+
+   var welcome = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: "Welcome to the experiment. Press any key to begin."
+};
+timeline.push(welcome);
+
+var instructions = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: `
+    <p>In this experiment, a circle will appear in the center 
+    of the screen.</p><p>If the circle is <strong>blue</strong>, 
+    press the letter B on the keyboard as fast as you can.</p>
+    <p>If the circle is <strong>orange</strong>, press the letter O 
+    as fast as you can.</p>
+    <p>Press any key to begin.</p>
+  `
+};
+timeline.push(instructions);
+
+var blue_trial_1 = {
+  type: jsPsychImageKeyboardResponse,
+  stimulus: 'images/blue.png',
+  choices: ['b', 'o'],
+  prompt: "<p>Press b if the circle is blue and o if the circle is orange.</p>",
+  trial_duration: 5000,
+  post_trial_gap: 500,
+  on_finish: function(data){
+    // Score the keyboard response as correct or incorrect.
+    if(jsPsych.pluginAPI.compareKeys(data.response, "b")){
+      data.correct = true;
+    } else {
+      data.correct = false; 
+    }
+  }
+}
+
+var feedback = {
+  type: jsPsychHtmlKeyboardResponse,
+  trial_duration: 1000,
+  stimulus: function(){
+    // The feedback stimulus is a dynamic parameter because we can't know in advance whether
+    // the stimulus should be 'correct' or 'incorrect'.
+    // Instead, this function will check the accuracy of the last response and use that information to set
+    // the stimulus value on each trial.
+    var last_trial_correct = jsPsych.data.get().last(1).values()[0].correct;
+    if(last_trial_correct){
+      return "<p>Correct!</p>"; // the parameter value has to be returned from the function
+    } else {
+      return "<p>Wrong.</p>"; // the parameter value has to be returned from the function
+    }
+  }
+}
+timeline.push(blue_trial_1, feedback);
+
+
+var orange_trial_1 = {
+  type: jsPsychImageKeyboardResponse,
+  stimulus: 'images/orange.png',
+  choices: ['b', 'o'],
+  prompt: "<p>Press b if the circle is blue and o if the circle is orange.</p>",
+  trial_duration: 5000,
+  post_trial_gap: 500,
+  on_finish: function(data){
+    // Score the keyboard response as correct or incorrect.
+    if(jsPsych.pluginAPI.compareKeys(data.response, "o")){
+      data.correct = true;
+    } else {
+      data.correct = false; 
+    }
+  }
+};
+ 
+timeline.push(orange_trial_1, feedback);
+
+var blue_trial_2 = {
+  type: jsPsychImageKeyboardResponse,
+  stimulus: 'images/blue.png',
+  choices: ['b', 'o'],
+  prompt: "<p>Press b if the circle is blue and o if the circle is orange.</p>",
+  trial_duration: 5000,
+  post_trial_gap: 500,
+  on_finish: function(data){
+    // Score the keyboard response as correct or incorrect.
+    if(jsPsych.pluginAPI.compareKeys(data.response, "b")){
+      data.correct = true;
+    } else {
+      data.correct = false; 
+    }
+  }
+};
+
+var orange_trial_2 = {
+  type: jsPsychImageKeyboardResponse,
+  stimulus: 'images/orange.png',
+  choices: ['b', 'o'],
+  prompt: "<p>Press b if the circle is blue and o if the circle is orange.</p>",
+  trial_duration: 5000,
+  post_trial_gap: 500,
+  on_finish: function(data){
+    // Score the keyboard response as correct or incorrect.
+    if(jsPsych.pluginAPI.compareKeys(data.response, "o")){
+      data.correct = true;
+    } else {
+      data.correct = false; 
+    }
+  }
+};
+
+timeline.push(orange_trial_2, feedback, blue_trial_2, feedback)
+
+var kitty = {
+  type: jsPsychImageKeyboardResponse,
+  stimulus: 'images/kittycat.png',
+  choices: ['1', '2'],
+  prompt: "<p>Press 1 if the kitty is cute or 2 if you have no soul.</p>",
+  post_trial_gap: 500,
+};
+timeline.push(kitty);
+
+jsPsych.run(timeline);
+
+ </script>
+</html>
